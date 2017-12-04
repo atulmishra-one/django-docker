@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+  server:
+    image: nginx
+    volumes:
+      #- ./web:/srv/web
+      - ./server:/etc/nginx/conf.d
+      - ./web/static:/srv/web/static
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+  web:
+    build: .
+    command: bash -c "python manage.py collectstatic --noinput && gunicorn web.wsgi -b 0.0.0.0:8000"
+    volumes:
+      - ./web:/srv/web
+      - ./web/static:/srv/web/static
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+

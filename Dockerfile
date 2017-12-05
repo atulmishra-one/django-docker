@@ -7,7 +7,4 @@ RUN pip install -r requirements.txt
 
 ADD . /srv/
 
-ENV http_proxy host:port
-ENV https_proxy host:port
-
 EXPOSE 8000

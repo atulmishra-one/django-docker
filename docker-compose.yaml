@@ -3,19 +3,28 @@ version: '3'
 services:
   db:
     image: postgres
+    environment:
+      - POSTGRES_USER=django
+      - POSTGRES_PASSWORD=django
+      - POSTGRES_DB=django_web
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql:/var/lib/postgresql/data
+    restart: always
   server:
     image: nginx
     volumes:
-      #- ./web:/srv/web
       - ./server:/etc/nginx/conf.d
       - ./web/static:/srv/web/static
     ports:
       - "80:80"
     depends_on:
       - web
+    restart: always
   web:
     build: .
-    command: bash -c "python manage.py collectstatic --noinput && gunicorn web.wsgi -b 0.0.0.0:8000"
+    command: bash -c "sleep 10 && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput  && gunicorn web.wsgi -b 0.0.0.0:8000"
     volumes:
       - ./web:/srv/web
       - ./web/static:/srv/web/static
@@ -23,4 +32,4 @@ services:
       - "8000:8000"
     depends_on:
       - db
-
+    restart: always

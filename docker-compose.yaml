@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgresql:/var/lib/postgresql/data
+      - postgresql-data:/var/lib/postgresql/data
     restart: always
   server:
     image: nginx
@@ -33,3 +33,5 @@ services:
     depends_on:
       - db
     restart: always
+volumes:
+  postgresql-data:
